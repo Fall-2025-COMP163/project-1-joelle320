@@ -1,0 +1,7 @@
+Character Name: Naruto Uzumaki
+Class: Shinobi
+Level: 2
+Strength: 18
+Magic: 6
+Health: 135
+Gold: 100
