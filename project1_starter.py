@@ -81,6 +81,12 @@ def calculate_stats(character_class, level):
 
 
 def save_character(character, filename):
+    import os
+
+    directory = os.path.dirname(filename)
+    if directory and not os.path.exists(directory):
+        return False
+    
     with open(filename, "w") as character_file:
         character_file.write("Character Name: " + str(character["name"]) + "\n")
         character_file.write("Class: " + str(character["class"]) + "\n")  # internal class (tests expect this)
