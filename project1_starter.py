@@ -3,8 +3,15 @@ COMP 163 - Project 1: Character Creator & Saving/Loading
 Name: Lauren Roberson
 Date: 24 October, 2025
 
-AI Usage: AI assisted in designing Naruto-themed visual class names while keeping
-internal project-required class names for automated testing compatibility.
+AI Usage Statement:
+This project received assistance from ChatGPT (GPT-5 model). The AI helped clarify
+assignment instructions, polish the function design structure for improved readability,
+and suggested a technique to preserve a Naruto-themed user display while still passing
+the COMP163-required internal class names checked by the autograding tests.
+-  prompted summary from ChatGPT
+
+MLA Citation:
+OpenAI. “ChatGPT (GPT-5 Model).” OpenAI, 2025, https://chat.openai.com/.
 """
 
 # Mapping so the user sees Naruto classes, but tests see canonical class names
