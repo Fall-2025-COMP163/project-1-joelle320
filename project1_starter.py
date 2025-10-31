@@ -3,22 +3,45 @@ COMP 163 - Project 1: Character Creator & Saving/Loading
 Name: Lauren Roberson
 Date: 24 October, 2025
 
-AI Usage: AI helped transform the original code I provided to Naruto-inspired character classes and file I/O structure, and substituted with better descriptive variable naming."""
+AI Usage: AI assisted in designing Naruto-themed visual class names while keeping
+internal project-required class names for automated testing compatibility.
+"""
+
+# Mapping so the user sees Naruto classes, but tests see canonical class names
+CLASS_MAP = {
+    "Shinobi": "Warrior",
+    "Uchiha": "Mage",
+    "Hyuga": "Rogue",
+    "Medic": "Cleric"
+}
+
+# Reverse mapping: internal → Naruto display names
+REVERSE_CLASS_MAP = {
+    "Warrior": "Shinobi",
+    "Mage": "Uchiha",
+    "Rogue": "Hyuga",
+    "Cleric": "Medic"
+}
 
 def create_character(name, character_class):
-    """
-    Creates a new Naruto-themed character dictionary with calculated stats.
-    Returns: dictionary with keys: name, class, level, strength, magic, health, gold
-    """
     character_class = character_class.strip().title()
+
+    # Convert Naruto class to internal required class
+    if character_class in CLASS_MAP:
+        internal_class = CLASS_MAP[character_class]
+    else:
+        internal_class = character_class  # fallback if unusual input
+
     level = 1
     gold = 100
 
-    strength, magic, health = calculate_stats(character_class, level)
+    strength, magic, health = calculate_stats(internal_class, level)
 
+    # Store internal class for tests, but also remember Naruto class for display
     character = {
         "name": name,
-        "class": character_class,
+        "class": internal_class,              # used by tests
+        "display_class": character_class,     # shown to user
         "level": level,
         "strength": strength,
         "magic": magic,
@@ -29,39 +52,27 @@ def create_character(name, character_class):
 
 
 def calculate_stats(character_class, level):
-    """
-    Calculates base stats based on Naruto ninja classes.
-    Returns: tuple of (strength, magic, health)
-
-    Naruto Class Themes:
-    - Shinobi (Warrior type): strong taijutsu, high health
-    - Uchiha (Mage type): powerful ninjutsu, low health
-    - Hyuga (Rogue type): balanced speed and chakra control
-    - Medic (Cleric type): healing chakra, high magic and health
-    """
-
-    if character_class == "Shinobi":
+    if character_class == "Warrior":
         strength = 15 + (level - 1) * 3
-        magic = 5 + (level - 1) * 1
+        magic = 2 + (level - 1) * 0
         health = 120 + (level - 1) * 15
 
-    elif character_class == "Uchiha":
-        strength = 6 + (level - 1) * 1
-        magic = 18 + (level - 1) * 5
+    elif character_class == "Mage":
+        strength = 5 + (level - 1) * 1
+        magic = 15 + (level - 1) * 4
         health = 80 + (level - 1) * 8
 
-    elif character_class == "Hyuga":
+    elif character_class == "Rogue":
         strength = 10 + (level - 1) * 2
-        magic = 10 + (level - 1) * 2
-        health = 90 + (level - 1) * 9
+        magic = 7 + (level - 1) * 1
+        health = 70 + (level - 1) * 6
 
-    elif character_class == "Medic":
+    elif character_class == "Cleric":
         strength = 8 + (level - 1) * 1
-        magic = 16 + (level - 1) * 3
-        health = 110 + (level - 1) * 12
+        magic = 14 + (level - 1) * 3
+        health = 100 + (level - 1) * 10
 
     else:
-        # Default stats for unknown classes
         strength = 5
         magic = 5
         health = 50
@@ -70,13 +81,9 @@ def calculate_stats(character_class, level):
 
 
 def save_character(character, filename):
-    """
-    Saves character to text file in specific format.
-    Returns: True if successful, False if error occurred.
-    """
     with open(filename, "w") as character_file:
         character_file.write("Character Name: " + str(character["name"]) + "\n")
-        character_file.write("Class: " + str(character["class"]) + "\n")
+        character_file.write("Class: " + str(character["class"]) + "\n")  # internal class (tests expect this)
         character_file.write("Level: " + str(character["level"]) + "\n")
         character_file.write("Strength: " + str(character["strength"]) + "\n")
         character_file.write("Magic: " + str(character["magic"]) + "\n")
@@ -86,10 +93,6 @@ def save_character(character, filename):
 
 
 def load_character(filename):
-    """
-    Loads character from text file.
-    Returns: character dictionary if successful, None if file not found.
-    """
     import os
     if not os.path.exists(filename):
         return None
@@ -120,16 +123,19 @@ def load_character(filename):
             elif key == "Gold":
                 character["gold"] = int(value)
 
+    # Restore Naruto display class
+    if character["class"] in REVERSE_CLASS_MAP:
+        character["display_class"] = REVERSE_CLASS_MAP[character["class"]]
+    else:
+        character["display_class"] = character["class"]
+
     return character
 
 
 def display_character(character):
-    """
-    Prints formatted Naruto-style character sheet.
-    """
-    print("=== NARUTO CHARACTER SHEET ===")
+    print("=== CHARACTER SHEET ===")
     print("Name: " + str(character["name"]))
-    print("Class: " + str(character["class"]))
+    print("Class: " + str(character["display_class"]))  # Naruto display stays visible
     print("Level: " + str(character["level"]))
     print("Strength: " + str(character["strength"]))
     print("Magic: " + str(character["magic"]))
@@ -138,9 +144,6 @@ def display_character(character):
 
 
 def level_up(character):
-    """
-    Increases character level and recalculates stats.
-    """
     character["level"] = character["level"] + 1
     new_stats = calculate_stats(character["class"], character["level"])
     character["strength"] = new_stats[0]
